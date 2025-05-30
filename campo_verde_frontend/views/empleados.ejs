@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Empleados</title>
+</head>
+<body>
+    <h1>Empleados</h1>
+
+    <a href="/empleados/nuevo">Agregar Nuevo Empleado</a>
+    <ul>
+        <% empleados.forEach(function(emp) { %>
+            <li><%= emp.nombre %> <%= emp.apellido %> - DNI: <%= emp.dniEmpleado %> </li>
+        <% }); %>
+    </ul>
+</body>
+</html>

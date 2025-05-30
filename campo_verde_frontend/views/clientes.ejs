@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Clientes</title>
+</head>
+<body>
+    <h1>Clientes</h1>
+    <a href="/clientes/nuevo">Agregar Nuevo Cliente</a>
+    <ul>
+        <% clientes.forEach(function(cli) { %>
+            <li><%= cli.nombre %> <%= cli.apellido %> - DNI: <%= cli.dniCliente %> </li>
+        <% }); %>
+    </ul>
+    <hr>
+    <a href="/empleados">Ir a Empleados</a> | 
+    <a href="/productos">Ir a Productos</a>
+</body>
+</html>

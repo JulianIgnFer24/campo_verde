@@ -1,0 +1,13 @@
+/home/julian-fernandez/Documents/Facultad/S5/db/campo_verde/campo_verde_backend/src/main/java/ar/edu/uncuyo/controller/EmpleadoController.java
+/home/julian-fernandez/Documents/Facultad/S5/db/campo_verde/campo_verde_backend/src/main/java/ar/edu/uncuyo/model/Producto.java
+/home/julian-fernandez/Documents/Facultad/S5/db/campo_verde/campo_verde_backend/src/main/java/ar/edu/uncuyo/repository/EmpleadoRepository.java
+/home/julian-fernandez/Documents/Facultad/S5/db/campo_verde/campo_verde_backend/src/main/java/ar/edu/uncuyo/model/FacturaCliente.java
+/home/julian-fernandez/Documents/Facultad/S5/db/campo_verde/campo_verde_backend/src/main/java/ar/edu/uncuyo/controller/ClienteController.java
+/home/julian-fernandez/Documents/Facultad/S5/db/campo_verde/campo_verde_backend/src/main/java/ar/edu/uncuyo/Main.java
+/home/julian-fernandez/Documents/Facultad/S5/db/campo_verde/campo_verde_backend/src/main/java/ar/edu/uncuyo/repository/FacturaClienteRepository.java
+/home/julian-fernandez/Documents/Facultad/S5/db/campo_verde/campo_verde_backend/src/main/java/ar/edu/uncuyo/repository/ClienteRepository.java
+/home/julian-fernandez/Documents/Facultad/S5/db/campo_verde/campo_verde_backend/src/main/java/ar/edu/uncuyo/controller/ProductoController.java
+/home/julian-fernandez/Documents/Facultad/S5/db/campo_verde/campo_verde_backend/src/main/java/ar/edu/uncuyo/model/Empleado.java
+/home/julian-fernandez/Documents/Facultad/S5/db/campo_verde/campo_verde_backend/src/main/java/ar/edu/uncuyo/repository/ProductoRepository.java
+/home/julian-fernandez/Documents/Facultad/S5/db/campo_verde/campo_verde_backend/src/main/java/ar/edu/uncuyo/model/Cliente.java
+/home/julian-fernandez/Documents/Facultad/S5/db/campo_verde/campo_verde_backend/src/main/java/ar/edu/uncuyo/controller/FacturaClienteController.java

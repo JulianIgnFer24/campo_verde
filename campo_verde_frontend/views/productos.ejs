@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Productos</title>
+</head>
+<body>
+    <h1>Productos</h1>
+    <a href="/productos/nuevo">Agregar Nuevo Producto</a>
+    <ul>
+        <% productos.forEach(function(prod) { %>
+            <li><%= prod.descripcion %> - Precio: $<%= prod.precio %> - Cantidad: <%= prod.cantidad %> </li>
+        <% }); %>
+    </ul>
+    <hr>
+    <a href="/empleados">Ir a Empleados</a> | 
+    <a href="/clientes">Ir a Clientes</a>
+</body>
+</html>

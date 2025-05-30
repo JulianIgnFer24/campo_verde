@@ -1,0 +1,13 @@
+ar/edu/uncuyo/controller/ClienteController.class
+ar/edu/uncuyo/repository/EmpleadoRepository.class
+ar/edu/uncuyo/model/Producto.class
+ar/edu/uncuyo/Main.class
+ar/edu/uncuyo/controller/EmpleadoController.class
+ar/edu/uncuyo/model/FacturaCliente.class
+ar/edu/uncuyo/repository/FacturaClienteRepository.class
+ar/edu/uncuyo/controller/ProductoController.class
+ar/edu/uncuyo/controller/FacturaClienteController.class
+ar/edu/uncuyo/repository/ProductoRepository.class
+ar/edu/uncuyo/model/Empleado.class
+ar/edu/uncuyo/repository/ClienteRepository.class
+ar/edu/uncuyo/model/Cliente.class
