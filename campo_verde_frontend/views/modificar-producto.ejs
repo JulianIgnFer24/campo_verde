@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Modificar Producto</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        label {
+            display: inline-block;
+            width: 150px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 6px;
+            width: 250px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .acciones {
+            margin-top: 20px;
+        }
+
+        .btn-volver {
+            text-decoration: none;
+            color: #2196F3;
+            font-size: 16px;
+        }
+
+        .btn-volver:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Modificar Producto - Código: <%= producto.cod %></h1>
+
+    <!-- Formulario con confirmación -->
+    <form id="formulario" action="/productos/actualizar/<%= producto.cod %>" method="POST" onsubmit="return confirmarModificacion()">
+        <input type="hidden" name="cod" value="<%= producto.cod %>">
+
+        <label for="descripcion">Descripción:</label>
+        <input type="text" id="descripcion" name="descripcion" value="<%= producto.descripcion %>" required><br><br>
+
+        <label for="cantidad">Cantidad:</label>
+        <input type="number" id="cantidad" name="cantidad" value="<%= producto.cantidad %>" required><br><br>
+
+        <label for="precio">Precio:</label>
+        <input type="number" step="0.01" id="precio" name="precio" value="<%= producto.precio %>" required><br><br>
+
+        <button type="submit">Guardar Cambios</button>
+    </form>
+
+    <div class="acciones">
+        <a href="/productos" class="btn-volver">⬅️ Volver al listado</a>
+    </div>
+
+    <script>
+        function confirmarModificacion() {
+            // Muestra la ventana emergente
+            const respuesta = confirm("¿Está seguro de que quiere modificar este producto?");
+
+            if (!respuesta) {
+                return false; // Cancela el envío del formulario
+            }
+
+            return true; // Permite enviar el formulario
+        }
+    </script>
+
+</body>
+</html>

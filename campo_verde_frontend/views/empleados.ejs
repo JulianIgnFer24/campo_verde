@@ -3,15 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <title>Listado de Empleados</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 6px 12px;
+            text-decoration: none;
+            font-size: 14px;
+            margin-right: 10px;
+            color: white;
+            background-color: #2196F3;
+            border-radius: 4px;
+        }
+
+        .btn:hover {
+            background-color: #1976D2;
+        }
+
+        .btn-modificar {
+            background-color: #FF9800;
+        }
+
+        .btn-borrar {
+            background-color: #F44336;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
 </head>
 <body>
+
     <h1>Empleados</h1>
 
-    <a href="/empleados/nuevo">Agregar Nuevo Empleado</a>
-    <ul>
-        <% empleados.forEach(function(emp) { %>
-            <li><%= emp.nombre %> <%= emp.apellido %> - DNI: <%= emp.dniEmpleado %> </li>
-        <% }); %>
-    </ul>
+    <a href="/empleados/nuevo" class="btn">➕ Agregar Nuevo Empleado</a>
+    <a href="/" class="btn">🏠 Volver al Inicio</a>
+
+    <% if (empleados && empleados.length > 0) { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>DNI</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Tipo</th>
+                    <th>Sueldo</th>
+                    <th>Dirección</th>
+                    <th>Supervisor</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% empleados.forEach(function(emp) { %>
+                    <tr>
+                        <td><%= emp.dniEmpleado %></td>
+                        <td><%= emp.nombre %></td>
+                        <td><%= emp.apellido %></td>
+                        <td><%= emp.tipo %></td>
+                        <td>$<%= emp.sueldo %></td>
+                        <td><%= emp.direccion %></td>
+                        <td>
+                            <% if (emp.supervisor) { %>
+                                <%= emp.supervisor.dniEmpleado %> - 
+                                <%= emp.supervisor.nombre %> <%= emp.supervisor.apellido %>
+                            <% } else { %>
+                                Ninguno
+                            <% } %>
+                        </td>
+                        <td>
+                            <a href="/empleados/modificar/<%= emp.dniEmpleado %>" class="btn btn-modificar">✏️ Modificar</a>
+                            <a href="/empleados/eliminar/<%= emp.dniEmpleado %>" class="btn btn-borrar" onclick="return confirmarEliminacion()">❌ Borrar</a>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <p>No hay empleados registrados aún.</p>
+    <% } %>
+
+    <script>
+        function confirmarEliminacion() {
+            return confirm("¿Está seguro de que quiere eliminar este empleado?");
+        }
+    </script>
+
 </body>
 </html>

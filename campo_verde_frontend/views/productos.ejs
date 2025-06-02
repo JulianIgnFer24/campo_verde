@@ -2,18 +2,107 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Productos</title>
+    <title>Listado de Productos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 6px 10px;
+            margin-right: 5px;
+            text-decoration: none;
+            color: white;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .btn-modificar {
+            background-color: #FF9800;
+        }
+
+        .btn-agregar {
+            background-color: #4CAF50;
+        }
+
+        .btn-borrar {
+            background-color: #F44336;
+        }
+
+        .btn-buscar {
+            background-color: #2196F3;
+        }
+    </style>
 </head>
 <body>
+
     <h1>Productos</h1>
-    <a href="/productos/nuevo">Agregar Nuevo Producto</a>
-    <ul>
-        <% productos.forEach(function(prod) { %>
-            <li><%= prod.descripcion %> - Precio: $<%= prod.precio %> - Cantidad: <%= prod.cantidad %> </li>
-        <% }); %>
-    </ul>
+
+    <!-- Botón para alta -->
+    <a href="/productos/nuevo" class="btn btn-agregar">➕ Agregar Nuevo Producto</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (productos && productos.length > 0) { %>
+                <% productos.forEach(function(prod) { %>
+                    <tr>
+                        <td><%= prod.cod %></td>
+                        <td><%= prod.descripcion %></td>
+                        <td>$<%= prod.precio %></td>
+                        <td><%= prod.cantidad %></td>
+                        <td>
+                            <a href="/productos/modificar/<%= prod.cod %>" class="btn btn-modificar">✏️ Modificar</a>
+                            <a href="/productos/eliminar/<%= prod.cod %>" class="btn btn-borrar" onclick="return confirmarEliminacion()">❌ Borrar</a>
+                        </td>
+                    </tr>
+                <% }); %>
+            <% } else { %>
+                <tr>
+                    <td colspan="5" style="text-align:center;">No hay productos registrados</td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+
     <hr>
-    <a href="/empleados">Ir a Empleados</a> | 
-    <a href="/clientes">Ir a Clientes</a>
+    <a href="/" class="btn btn-buscar">🏠 Volver al Inicio</a>
+
+    <script>
+        function confirmarEliminacion() {
+            return confirm("¿Está seguro de que quiere eliminar este producto?");
+        }
+    </script>
+
 </body>
 </html>
