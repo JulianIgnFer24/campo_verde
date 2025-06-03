@@ -2,6 +2,8 @@ const express = require('express');
 const axios = require('axios');
 const app = express();
 const port = 3000;
+const { exec } = require('child_process');
+
 
 // === Estas líneas deben estar una sola vez al inicio del archivo ===
 const fs = require('fs');
@@ -431,6 +433,56 @@ app.get('/productos/descargar-pdf', async (req, res) => {
         console.error("Error al generar PDF:", error.message);
         res.status(500).send('Error al generar el PDF - Inténtalo nuevamente');
     }
+});
+
+
+
+// === DESCARGAR DUMP COMPLETO DE LA BASE DE DATOS ===
+app.get('/descargar-dump', (req, res) => {
+    const dbName = 'campo_verde';
+    const dbUser = 'julian-fernandez'; // Cambia si usas otro usuario
+    const outputFilePath = path.join(__dirname, `${dbName}-backup.sql`);
+
+    // Comando pg_dump
+    const command = `pg_dump -U ${dbUser} -h localhost -F p ${dbName} > ${outputFilePath}`;
+
+    console.log("Ejecutando comando:", command);
+
+    // Asegúrate de tener PGPASSWORD disponible
+    exec(command, {
+        env: {
+            ...process.env,
+            PGPASSWORD: 'adminpass' // ← Tu contraseña de usuario PostgreSQL
+        }
+    }, async (error, stdout, stderr) => {
+        if (stderr) {
+            console.warn("Advertencia de pg_dump:", stderr);
+        }
+
+        if (error) {
+            console.error("Error al ejecutar pg_dump:", error.message);
+            return res.status(500).send(`Error al generar el dump: ${error.message}`);
+        }
+
+        console.log("Archivo generado:", outputFilePath);
+
+        try {
+            // Forzar descarga del archivo SQL
+            res.header('Content-Type', 'application/octet-stream');
+            res.header('Content-Disposition', `attachment; filename=${dbName}-backup.sql`);
+
+            const fileStream = fs.createReadStream(outputFilePath);
+            fileStream.pipe(res);
+
+            fileStream.on('end', () => {
+                fs.unlinkSync(outputFilePath); // Borrar temporal después de enviar
+            });
+
+        } catch (readError) {
+            console.error("Error al leer el archivo:", readError.message);
+            res.status(500).send('Error al leer el archivo generado');
+        }
+    });
 });
 
 

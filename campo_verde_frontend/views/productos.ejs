@@ -63,8 +63,23 @@
     <!-- Botón para alta -->
     <a href="/productos/nuevo" class="btn btn-agregar">➕ Agregar Nuevo Producto</a>
     <a href="/" class="btn btn-buscar">🏠 Volver al Inicio</a>
-    <a href="/productos/descargar-pdf" class="btn">📄 Descargar PDF</a>
-
+    <a href="/empleados/descargar-pdf" 
+    style="
+        display: inline-block;
+        background-color: #d32f2f;
+        color: white;
+        padding: 6px 10px;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 16px;
+        margin-top: 20px;
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+        font-weight: bold;
+    " onmouseover="this.style.backgroundColor='#b71c1c'" 
+    onmouseout="this.style.backgroundColor='#d32f2f'">
+        <span style="margin-right: 8px; vertical-align: middle;">📄</span> Descargar Lista (PDF)
+    </a>
     <table>
         <thead>
             <tr>
