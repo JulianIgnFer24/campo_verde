@@ -1,15 +1,14 @@
 package ar.edu.uncuyo.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.*; // ← Importante para @JsonProperty
+import java.io.Serializable;
 
 @Entity
 @Table(name = "producto")
-public class Producto {
+public class Producto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "cod", nullable = false)
@@ -35,7 +34,8 @@ public class Producto {
         this.precio = precio;
     }
 
-    // Getters y Setters
+    // Getters y Setters normales
+
     public Long getCod() {
         return cod;
     }
@@ -66,6 +66,17 @@ public class Producto {
 
     public void setPrecio(Double precio) {
         this.precio = precio;
+    }
+
+    // Este método permite recibir el campo "descripcion" desde JSON
+    @JsonProperty("descripcion")
+    public String getDescripcionJSON() {
+        return descripcion;
+    }
+
+    @JsonProperty("descripcion")
+    public void parseDescripcion(@JsonProperty("descripcion") String descripcion) {
+        this.descripcion = descripcion;
     }
 
     @Override

@@ -13,13 +13,33 @@ app.get('/', (req, res) => {
 });
 
 // === EMPLEADOS ===
+
 app.get('/empleados', async (req, res) => {
     try {
-        const response = await axios.get('http://localhost:8080/api/empleados');
-        res.render('empleados', { empleados: response.data });
+        console.log("Intentando conectar con backend Spring Boot...");
+        
+        const response = await axios.get('http://localhost:8080/api/empleados', {
+            timeout: 10000 // 10 segundos máximo para evitar abortos por timeout
+        });
+
+        console.log("Datos recibidos del backend:", response.data); // Muestra el JSON que llega
+
+        const empleados = Array.isArray(response.data) ? response.data : [];
+
+        res.render('empleados', { empleados }); // Pasamos los datos a la vista EJS
     } catch (error) {
-        console.error("Error al obtener empleados:", error.message);
-        res.status(500).send('Error al obtener empleados');
+        if (error.code === 'ECONNABORTED') {
+            console.error("Error: Conexión abortada - Timeout");
+            return res.status(504).send('No se pudo conectar con el backend. Asegúrate de que Spring Boot esté corriendo.');
+        }
+
+        if (error.response) {
+            console.error("Respuesta de error del backend:", error.response.status, error.response.data);
+            return res.status(error.response.status || 500).send('Error al obtener empleados desde el backend');
+        }
+
+        console.error("Error de red u otro:", error.message);
+        res.status(500).send('Error al conectarse al backend - Inténtalo más tarde');
     }
 });
 
@@ -128,14 +148,16 @@ app.get('/productos/nuevo', (req, res) => {
 });
 
 app.post('/productos', async (req, res) => {
-    try {
-        const producto = {
-            codigo: req.body.codigo ? parseInt(req.body.codigo) : null,
-            nombre: req.body.nombre || '',
-            precio: req.body.precio ? parseFloat(req.body.precio) : null,
-            cantidad: req.body.cantidad ? parseInt(req.body.cantidad) : null
-        };
+    console.log("Datos recibidos - Alta Producto:", req.body);
 
+    const producto = {
+        cod: req.body.cod ? parseInt(req.body.cod) : null,
+        descripcion: req.body.descripcion || '',
+        precio: req.body.precio ? parseFloat(req.body.precio) : null,
+        cantidad: req.body.cantidad ? parseInt(req.body.cantidad) : null
+    };
+
+    try {
         await axios.post('http://localhost:8080/api/productos', producto);
         res.redirect('/productos');
     } catch (error) {
@@ -144,7 +166,6 @@ app.post('/productos', async (req, res) => {
     }
 });
 
-// === MODIFICAR PRODUCTO ===
 app.get('/productos/modificar/:id', async (req, res) => {
     try {
         const response = await axios.get(`http://localhost:8080/api/productos/${req.params.id}`);
@@ -159,7 +180,7 @@ app.post('/productos/actualizar/:id', async (req, res) => {
     console.log("Datos recibidos - Actualizar Producto:", req.body);
 
     const producto = {
-        nombre: req.body.nombre || '',
+        descripcion: req.body.descripcion || '',
         precio: req.body.precio ? parseFloat(req.body.precio) : null,
         cantidad: req.body.cantidad ? parseInt(req.body.cantidad) : null
     };
@@ -173,7 +194,6 @@ app.post('/productos/actualizar/:id', async (req, res) => {
     }
 });
 
-// === ELIMINAR PRODUCTO ===
 app.get('/productos/eliminar/:id', async (req, res) => {
     try {
         await axios.delete(`http://localhost:8080/api/productos/${req.params.id}`);
