@@ -3,6 +3,11 @@ const axios = require('axios');
 const app = express();
 const port = 3000;
 
+// === Estas líneas deben estar una sola vez al inicio del archivo ===
+const fs = require('fs');
+const path = require('path');
+const puppeteer = require('puppeteer');
+
 // Motor de plantillas y middleware
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
@@ -203,6 +208,122 @@ app.get('/productos/eliminar/:id', async (req, res) => {
         res.status(500).send('Error al eliminar producto');
     }
 });
+
+
+
+
+// Ruta /empleados/descargar-pdf
+app.get('/empleados/descargar-pdf', async (req, res) => {
+    try {
+        const response = await axios.get('http://localhost:8080/api/empleados');
+        const empleados = Array.isArray(response.data) ? response.data : [];
+
+        if (empleados.length === 0) {
+            return res.status(404).send('No hay empleados para generar el PDF');
+        }
+
+        let filas = '';
+        empleados.forEach(emp => {
+            const supervisor = emp.dniSupervisor && emp.dniEmpleado !== emp.dniSupervisor
+                ? emp.dniSupervisor
+                : 'Ninguno';
+
+            filas += `
+                <tr>
+                    <td>${emp.dniEmpleado}</td>
+                    <td>${emp.nombre || ''}</td>
+                    <td>${emp.apellido || ''}</td>
+                    <td>${emp.tipo || ''}</td>
+                    <td>$${emp.sueldo || 0}</td>
+                    <td>${emp.direccion || ''}</td>
+                    <td>${supervisor}</td>
+                </tr>`;
+        });
+
+        const htmlContent = `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Empleados</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 30px; }
+        h1 { text-align: center; margin-bottom: 20px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #555;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lista de Empleados - Campo Verde</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>DNI</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Tipo</th>
+                <th>Sueldo</th>
+                <th>Dirección</th>
+                <th>DNI Supervisor</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${filas}
+        </tbody>
+    </table>
+</body>
+</html>
+        `;
+
+        const pdfPath = path.join(__dirname, 'lista_empleados.pdf');
+
+        const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+        const page = await browser.newPage();
+        await page.setContent(htmlContent, { waitUntil: 'domcontentloaded' });
+
+        await page.pdf({
+            path: pdfPath,
+            format: 'A4',
+            printBackground: true,
+            margin: {
+                top: '20px',
+                right: '20px',
+                bottom: '20px',
+                left: '20px'
+            }
+        });
+
+        await browser.close();
+
+        // Forzar descarga del PDF generado
+        res.header('Content-Type', 'application/pdf');
+        res.header('Content-Disposition', 'attachment; filename=lista_empleados.pdf');
+
+        const pdfStream = fs.createReadStream(pdfPath);
+        pdfStream.pipe(res);
+
+        // Opcional: eliminar el archivo temporal después de enviarlo
+        pdfStream.on('end', () => {
+            fs.unlinkSync(pdfPath); // Borrar el PDF temporal
+        });
+
+    } catch (error) {
+        console.error("Error al generar PDF:", error.message);
+        res.status(500).send('Error al generar el PDF - Revisa los logs');
+    }
+});
+
 
 // Iniciar servidor
 app.listen(port, () => {
