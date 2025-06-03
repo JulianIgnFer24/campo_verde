@@ -325,6 +325,116 @@ app.get('/empleados/descargar-pdf', async (req, res) => {
 });
 
 
+
+// === DESCARGAR LISTA DE PRODUCTOS COMO PDF ===
+app.get('/productos/descargar-pdf', async (req, res) => {
+    try {
+        console.log("Descargando lista de productos desde Spring Boot...");
+        const response = await axios.get('http://localhost:8080/api/productos');
+        const productos = Array.isArray(response.data) ? response.data : [];
+
+        if (productos.length === 0) {
+            return res.status(404).send('No hay productos para generar el PDF');
+        }
+
+        // Genera filas dinámicas
+        let filas = '';
+        productos.forEach(prod => {
+            filas += `
+                <tr>
+                    <td>${prod.cod}</td>
+                    <td>${prod.descripcion || ''}</td>
+                    <td>$${prod.precio || 0}</td>
+                    <td>${prod.cantidad || 0}</td>
+                </tr>`;
+        });
+
+        const htmlContent = `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Productos</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 30px; }
+        h1 { text-align: center; margin-bottom: 20px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #555;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lista de Productos - Campo Verde</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${filas}
+        </tbody>
+    </table>
+</body>
+</html>
+        `;
+
+        const pdfPath = path.join(__dirname, 'lista_productos.pdf');
+
+        console.log("Generando PDF...");
+        const browser = await puppeteer.launch({
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            headless: "new"
+        });
+        const page = await browser.newPage();
+        await page.setContent(htmlContent, { waitUntil: 'domcontentloaded' });
+
+        await page.pdf({
+            path: pdfPath,
+            format: 'A4',
+            printBackground: true,
+            margin: {
+                top: '20px',
+                right: '20px',
+                bottom: '20px',
+                left: '20px'
+            }
+        });
+
+        await browser.close();
+
+        // Forzar descarga del PDF
+        res.header('Content-Type', 'application/pdf');
+        res.header('Content-Disposition', 'attachment; filename=lista_productos.pdf');
+
+        const pdfStream = fs.createReadStream(pdfPath);
+        pdfStream.pipe(res);
+
+        pdfStream.on('end', () => {
+            fs.unlinkSync(pdfPath); // Borrar archivo temporal después de enviarlo
+        });
+
+    } catch (error) {
+        console.error("Error al generar PDF:", error.message);
+        res.status(500).send('Error al generar el PDF - Inténtalo nuevamente');
+    }
+});
+
+
+
 // Iniciar servidor
 app.listen(port, () => {
     console.log(`Frontend corriendo en http://localhost:${port}`);
